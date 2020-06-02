@@ -1,0 +1,36 @@
+Clone project to any where you want and go to source folder.
+Edit the config.txt file. Change the secret key, username and password. The username and password will be the login for your site. There is only one user - you.
+Build image: docker build . -t cs-flash-cards 
+Run container: docker run -d -p 1989:8000  --name cs-flash-cards cs-flash-cards
+Go your browser and type http://localhost:1989
+
+五、设置 Docker 开机自启动
+
+布署完 Jellyfin 之后以为像群晖一样能设置随主机启动自动运行 Docker 插件，哪知重启以后是这样的
+
+
+如何做到无人值守一直运行 Docker 进程呢，又是一番 " 削刮 "，终于找到解决之道：
+1、参考网上大神方法：
+
+用 winscp 进入到这个目录 /koolshare/scripts/，然后新建 docker.sh 将以下代码复制粘贴，保存，右键属性权限给 0777
+
+#!/bin/bash
+
+flag=$( ps | grep dockerd | grep -v "grep" | wc -l )
+
+if [ $flag = "1" ]
+
+then
+
+echo "docker RUNNING!"
+
+else
+
+/koolshare/scripts/docker_config.sh start
+
+fi
+#docker start up
+
+
+
+01 * * * * /koolshare/scripts/docker_config.sh start
